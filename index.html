@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Cityunisure 天氣預報</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="images/WEATHER.png" type="image/png">
+  
+</head> 
+<body class="bg-dark text-white">
+  <!-- 台灣地圖 -->
+  <div class="taiwan-map-container">
+    <div class="taiwan-map-image">
+      <img src="images/taiwan-map.png" alt="台灣地圖" id="taiwanMapImage" style="width: 100%; height: 100%; object-fit: contain;">
+    </div>
+    <svg class="taiwan-map-overlay" viewBox="0 0 180 240" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <!-- 城市標記點（根據實際地理位置調整，對應地圖圖片） -->
+      <!-- 臺北市：最北端，往右移動 -->
+      <circle id="marker-臺北市" class="city-marker" cx="112" cy="22" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
+      <!-- 新北市：包圍臺北市，往右移動 -->
+      <circle id="marker-新北市" class="city-marker" cx="105" cy="20" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
+      <!-- 臺中市：中部，往上移動 -->
+      <circle id="marker-臺中市" class="city-marker" cx="88" cy="108" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
+      <!-- 高雄市：南部，往上移動 -->
+      <circle id="marker-高雄市" class="city-marker" cx="82" cy="188" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
+      
+      <!-- 城市標籤 -->
+      <text id="label-臺北市" class="city-label" x="112" y="17" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">臺北</text>
+      <text id="label-新北市" class="city-label" x="105" y="15" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">新北</text>
+      <text id="label-臺中市" class="city-label" x="88" y="103" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">臺中</text>
+      <text id="label-高雄市" class="city-label" x="82" y="183" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">高雄</text>
+    </svg>
+  </div>
+
+  <div class="container py-5">
+    <div class="header-section mb-5">
+      <h1 class="text-center mb-4" id="locationName" style="font-size: 3rem; font-weight: bold;">城市名稱</h1>
+
+      <!-- 搜尋欄 -->
+      <div class="d-flex justify-content-center mb-4">
+        <div class="input-group" style="max-width: 500px;">
+          <input type="text" id="cityInput" class="form-control" placeholder="請輸入縣市，例如：臺北市">
+          <button class="btn btn-primary" onclick="getWeather()">顯示結果</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 城市便捷選擇框 -->
+    <div class="row mb-5">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('臺北市')">
+          <h5 class="mb-2">🏙️</h5>
+          <h6>臺北市</h6>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('新北市')">
+          <h5 class="mb-2">🏘️</h5>
+          <h6>新北市</h6>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('臺中市')">
+          <h5 class="mb-2">🏢</h5>
+          <h6>臺中市</h6>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('高雄市')">
+          <h5 class="mb-2">🌆</h5>
+          <h6>高雄市</h6>
+        </div>
+      </div>
+    </div>
+
+    <!-- 天氣結果區塊 -->
+    <div id="weatherResult">
+      <div class="row" id="forecastCards"></div>
+    </div>
+  </div>
+
+  <script src="js/json.js"></script>
+</body>
+</html>
