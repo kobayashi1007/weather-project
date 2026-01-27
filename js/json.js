@@ -30,9 +30,9 @@ async function getWeather() {
     const now = Date.now();
     // 檢查快取是否存在且未過期
     if (cache[city] && (now - cache[city].timestamp < CACHE_TTL)) {
-    console.log("使用快取資料");
-    renderWeather(cache[city].data, container);
-    return;
+      console.log("使用快取資料");
+      renderWeather(cache[city].data, container);
+      return;
     }
     const response = await fetch(url);              // 等待 API 回應
     const data = await response.json();             // 等待 JSON 解析
@@ -45,7 +45,17 @@ async function getWeather() {
     }
     // 更新快取
     cache[city] = { data, timestamp: now };
-    function renderWeather(data, container) { 
+    // 首次查詢也要直接渲染
+    renderWeather(data, container);
+  } catch (err) {
+    document.getElementById("forecastCards").innerHTML =
+      `<p class="text-danger">查詢失敗，請稍後再試</p>`;
+    console.error(err);
+  }
+}
+
+// 把 renderWeather 抽到外面，讓快取與首次查詢都能共用
+function renderWeather(data, container) { 
     const location = data.records.location[0];
     const times = location.weatherElement[0].time; 
     // 每次渲染前先清空
@@ -123,12 +133,6 @@ async function getWeather() {
       `;
     });
   }
-  } catch (err) {
-    document.getElementById("forecastCards").innerHTML =
-      `<p class="text-danger">查詢失敗，請稍後再試</p>`;
-    console.error(err);
-  }
-}
 
 // 根據天氣描述選擇 emoji 圖示
 function getIcon(desc) {
