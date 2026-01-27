@@ -2,6 +2,11 @@
 const apiKey = "CWA-283E4C54-42C0-43C8-AC47-AA0CE750AD13";
 const endpoint = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001";
 
+// 建立快取物件
+const cache = {};
+// 設定快取有效時間 (毫秒) → 一小時
+const CACHE_TTL = 60 * 60 * 1000;
+
 async function getWeather() {
   const cityInput = document.getElementById("cityInput").value.trim();
   const cityMap = {
@@ -12,29 +17,39 @@ async function getWeather() {
     "高雄市": "高雄市",
     "台北" :"臺北市",
     "台東縣":"臺東縣",
-    "台東":"臺東縣",
-    
+    "台東":"臺東縣",  
   };
   const city = cityMap[cityInput] || cityInput;
   const url = `${endpoint}?Authorization=${apiKey}&locationName=${city}`;
 
   document.getElementById("locationName").textContent = city;
   markCityOnMap(city);
+  const container = document.getElementById("forecastCards");
+  container.innerHTML = "";
   try {
+    const now = Date.now();
+    // 檢查快取是否存在且未過期
+    if (cache[city] && (now - cache[city].timestamp < CACHE_TTL)) {
+    console.log("使用快取資料");
+    renderWeather(cache[city].data, container);
+    return;
+    }
     const response = await fetch(url);              // 等待 API 回應
     const data = await response.json();             // 等待 JSON 解析
     console.log(data);
-    const container = document.getElementById("forecastCards");
     container.innerHTML = "";
 
     if (!data.records || !data.records.location || data.records.location.length === 0) {
       container.innerHTML = `<p class="text-danger">查無資料，請確認城市名稱</p>`;
       return;
     }
-
+    // 更新快取
+    cache[city] = { data, timestamp: now };
+    function renderWeather(data, container) { 
     const location = data.records.location[0];
     const times = location.weatherElement[0].time; 
-
+    // 每次渲染前先清空
+    container.innerHTML = "";
     // 顯示所有時段，不再限制只顯示3個
     times.forEach((t, index) => {
       const weatherDesc = location.weatherElement[0].time[index].parameter.parameterName;
@@ -107,6 +122,7 @@ async function getWeather() {
         </div>
       `;
     });
+  }
   } catch (err) {
     document.getElementById("forecastCards").innerHTML =
       `<p class="text-danger">查詢失敗，請稍後再試</p>`;
