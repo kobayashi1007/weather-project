@@ -9,7 +9,11 @@ async function getWeather() {
     "台中市": "臺中市",
     "台南市": "臺南市",
     "新北市": "新北市",
-    "高雄市": "高雄市"
+    "高雄市": "高雄市",
+    "台北" :"臺北市",
+    "台東縣":"臺東縣",
+    "台東":"臺東縣",
+    
   };
   const city = cityMap[cityInput] || cityInput;
   const url = `${endpoint}?Authorization=${apiKey}&locationName=${city}`;
@@ -43,14 +47,62 @@ async function getWeather() {
         hour: "2-digit", 
         minute: "2-digit" 
       });
+      const endTime = new Date(t.endTime).toLocaleString("zh-TW", { 
+        month: "short", 
+        day: "numeric", 
+        hour: "2-digit", 
+        minute: "2-digit" 
+      });
+      const fullStartTime = new Date(t.startTime).toLocaleString("zh-TW", { 
+        year: "numeric",
+        month: "long", 
+        day: "numeric", 
+        hour: "2-digit", 
+        minute: "2-digit",
+        weekday: "short"
+      });
+      const fullEndTime = new Date(t.endTime).toLocaleString("zh-TW", { 
+        year: "numeric",
+        month: "long", 
+        day: "numeric", 
+        hour: "2-digit", 
+        minute: "2-digit",
+        weekday: "short"
+      });
 
       container.innerHTML += `
         <div class="col-md-3 col-sm-6 mb-3">
-          <div class="card p-2 text-center shadow-sm">
-            <h6 style="font-size: 0.9rem; margin-bottom: 0.5rem;">${startTime}</h6>
-            <div style="font-size: 1.5rem;">${getIcon(weatherDesc)}</div>
-            <p style="font-size: 0.85rem; margin: 0.5rem 0;">${minTemp}°C ~ ${maxTemp}°C</p>
-            <small style="font-size: 0.75rem;">${weatherDesc}</small>
+          <div class="flip-card-container" onclick="flipCard(this)">
+            <div class="flip-card-inner">
+              <div class="flip-card-front card p-2 text-center shadow-sm">
+                <h6 style="font-size: 0.9rem; margin-bottom: 0.5rem;">${startTime}</h6>
+                <div style="font-size: 1.5rem;">${getIcon(weatherDesc)}</div>
+                <p style="font-size: 0.85rem; margin: 0.5rem 0;">${minTemp}°C ~ ${maxTemp}°C</p>
+                <small style="font-size: 0.75rem;">${weatherDesc}</small>
+                <div style="margin-top: 0.5rem; font-size: 0.7rem; opacity: 0.7;">點擊查看詳情</div>
+              </div>
+              <div class="flip-card-back card p-2 text-center shadow-sm">
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 0.5rem;">
+                  <div>
+                    <h6 style="font-size: 0.85rem; margin-bottom: 0.4rem; font-weight: bold;">詳細資訊</h6>
+                    <div style="font-size: 1.2rem; margin-bottom: 0.4rem;">${getIcon(weatherDesc)}</div>
+                    <div style="font-size: 0.7rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                      <div><strong>開始：</strong>${fullStartTime}</div>
+                    </div>
+                    <div style="font-size: 0.7rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                      <div><strong>結束：</strong>${fullEndTime}</div>
+                    </div>
+                    <div style="font-size: 0.75rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                      <div><strong>溫度：</strong>${minTemp}°C ~ ${maxTemp}°C</div>
+                    </div>
+                    <div style="font-size: 0.7rem; line-height: 1.4;">
+                      <div><strong>天氣：</strong>${weatherDesc}</div>
+                    </div>
+                  </div>
+                  <div style="margin-top: auto; font-size: 0.65rem; opacity: 0.7; padding-top: 0.3rem;">點擊返回</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       `;
@@ -115,5 +167,27 @@ function markCityOnMap(cityName) {
   if (label) {
     label.classList.add('active');
     label.setAttribute('opacity', '1');
+  }
+}
+
+// 翻轉卡片函數
+function flipCard(element) {
+  element.classList.toggle('flipped');
+}
+
+// 切換地圖展開/縮起
+function toggleMap() {
+  const mapContainer = document.getElementById('taiwanMapContainer');
+  const toggleIcon = document.getElementById('mapToggleIcon');
+  
+  mapContainer.classList.toggle('collapsed');
+  
+  // 更新按鈕圖示
+  if (mapContainer.classList.contains('collapsed')) {
+    toggleIcon.textContent = '🗺️';
+    toggleIcon.title = '展開地圖';
+  } else {
+    toggleIcon.textContent = '✕';
+    toggleIcon.title = '縮起地圖';
   }
 }
