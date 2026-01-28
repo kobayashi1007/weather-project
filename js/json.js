@@ -211,3 +211,11 @@ function toggleMap() {
     toggleIcon.title = '縮起地圖';
   }
 }
+
+// 處理 Enter 鍵查詢
+function handleEnterKey(event) {
+  if (event.key === 'Enter' || event.keyCode === 13) {
+    event.preventDefault();
+    getWeather();
+  }
+}
