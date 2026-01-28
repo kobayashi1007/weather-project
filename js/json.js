@@ -100,31 +100,31 @@ function renderWeather(data, container) {
           <div class="flip-card-container" onclick="flipCard(this)">
             <div class="flip-card-inner">
               <div class="flip-card-front card p-2 text-center shadow-sm">
-                <h6 style="font-size: 0.9rem; margin-bottom: 0.5rem;">${startTime}</h6>
-                <div style="font-size: 1.5rem;">${getIcon(weatherDesc)}</div>
-                <p style="font-size: 0.85rem; margin: 0.5rem 0;">${minTemp}°C ~ ${maxTemp}°C</p>
-                <small style="font-size: 0.75rem;">${weatherDesc}</small>
-                <div style="margin-top: 0.5rem; font-size: 0.7rem; opacity: 0.7;">點擊查看詳情</div>
+                <h6 style="font-size: 1.5rem; margin-bottom: 0.5rem;">${startTime}</h6>
+                <div style="font-size: 1.8rem;">${getIcon(weatherDesc)}</div>
+                <p style="font-size: 1rem; margin: 0.5rem 0;">${minTemp}°C ~ ${maxTemp}°C</p>
+                <small style="font-size: 1rem;">${weatherDesc}</small>
+                <div style="margin-top: 4rem; font-size: 0.8rem; opacity: 0.7;">點擊查看詳情</div>
               </div>
               <div class="flip-card-back card p-2 text-center shadow-sm">
                 <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 0.5rem;">
                   <div>
-                    <h6 style="font-size: 0.85rem; margin-bottom: 0.4rem; font-weight: bold;">詳細資訊</h6>
-                    <div style="font-size: 1.2rem; margin-bottom: 0.4rem;">${getIcon(weatherDesc)}</div>
-                    <div style="font-size: 0.7rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                    <h6 style="font-size: 1.5rem; margin-bottom: 0.4rem; font-weight: bold;">詳細資訊</h6>
+                    <div style="font-size: 1.8rem; margin-bottom: 0.4rem;">${getIcon(weatherDesc)}</div>
+                    <div style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 0.3rem;">
                       <div><strong>開始：</strong>${fullStartTime}</div>
                     </div>
-                    <div style="font-size: 0.7rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                    <div style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 0.3rem;">
                       <div><strong>結束：</strong>${fullEndTime}</div>
                     </div>
-                    <div style="font-size: 0.75rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                    <div style="font-size: 1rem; line-height: 1.4; margin-bottom: 0.3rem;">
                       <div><strong>溫度：</strong>${minTemp}°C ~ ${maxTemp}°C</div>
                     </div>
-                    <div style="font-size: 0.7rem; line-height: 1.4;">
+                    <div style="font-size: 1rem; line-height: 1.4;">
                       <div><strong>天氣：</strong>${weatherDesc}</div>
                     </div>
                   </div>
-                  <div style="margin-top: auto; font-size: 0.65rem; opacity: 0.7; padding-top: 0.3rem;">點擊返回</div>
+                  <div style="margin-top: auto; font-size: 0.8rem; opacity: 0.7; padding-top: 0.3rem;">點擊返回</div>
                 </div>
               </div>
             </div>
