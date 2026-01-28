@@ -7,6 +7,15 @@ body {
   background-attachment: fixed;
   min-height: 100vh;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 移動端背景優化 */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
 }
 
 body::before {
@@ -38,6 +47,30 @@ body::before {
   cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px; /* 觸控優化 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 移動端城市卡片優化 */
+@media (max-width: 576px) {
+  .city-card {
+    padding: 1rem !important;
+    min-height: 80px;
+  }
+  
+  .city-card h5 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .city-card h6 {
+    font-size: 1rem;
+  }
 }
 
 .city-card:hover {
@@ -48,6 +81,51 @@ body::before {
 
 .header-section {
   padding: 2rem 0;
+}
+
+/* 響應式標題 */
+.location-title {
+  font-size: 3rem;
+}
+
+@media (max-width: 768px) {
+  .location-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .location-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* 搜尋欄響應式 */
+.search-container {
+  max-width: 500px;
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  .search-container {
+    max-width: 100%;
+    flex-direction: column;
+  }
+  
+  .search-container .form-control {
+    border-radius: 0.375rem 0.375rem 0 0 !important;
+    margin-bottom: 0.5rem;
+  }
+  
+  .search-btn {
+    width: 100%;
+    border-radius: 0 0 0.375rem 0.375rem !important;
+    padding: 0.75rem;
+    font-size: 1rem;
+    min-height: 48px; /* 觸控優化 */
+  }
 }
 
 .weather-card {
@@ -74,6 +152,15 @@ body::before {
   gap: 10px;
 }
 
+/* 移動端地圖位置優化 */
+@media (max-width: 768px) {
+  .taiwan-map-wrapper {
+    top: 5px;
+    right: 5px;
+    gap: 5px;
+  }
+}
+
 .map-toggle-btn {
   width: 50px;
   height: 50px;
@@ -90,6 +177,19 @@ body::before {
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   z-index: 1001;
+  touch-action: manipulation; /* 觸控優化 */
+  -webkit-tap-highlight-color: transparent; /* 移除點擊高亮 */
+}
+
+/* 移動端按鈕優化 */
+@media (max-width: 768px) {
+  .map-toggle-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+    min-width: 44px; /* 確保觸控區域足夠大 */
+    min-height: 44px;
+  }
 }
 
 .map-toggle-btn:hover {
@@ -112,6 +212,24 @@ body::before {
   opacity: 1;
   transform: scale(1);
   transform-origin: top right;
+}
+
+/* 移動端地圖容器優化 */
+@media (max-width: 768px) {
+  .taiwan-map-container {
+    width: 150px;
+    height: 195px;
+    padding: 8px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .taiwan-map-container {
+    width: 120px;
+    height: 156px;
+    padding: 6px;
+  }
 }
 
 .taiwan-map-container.collapsed {
@@ -189,6 +307,22 @@ body::before {
   cursor: pointer;
   height: 280px;
   width: 100%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 移動端翻轉卡片優化 */
+@media (max-width: 768px) {
+  .flip-card-container {
+    height: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .flip-card-container {
+    height: 220px;
+    margin-bottom: 1rem;
+  }
 }
 
 .flip-card-inner {
@@ -239,4 +373,34 @@ body::before {
 .flip-card-container:hover .flip-card-front,
 .flip-card-container:hover .flip-card-back {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 移動端容器優化 */
+@media (max-width: 576px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .header-section {
+    padding: 1rem 0;
+  }
+  
+  /* 移動端卡片間距優化 */
+  .row.mb-5 {
+    margin-bottom: 2rem !important;
+  }
+  
+  /* 輸入框觸控優化 */
+  #cityInput {
+    min-height: 48px;
+    font-size: 16px; /* 防止 iOS 自動縮放 */
+  }
+}
+
+/* 確保所有可點擊元素在移動端有足夠的觸控區域 */
+@media (max-width: 768px) {
+  button, .btn, .city-card, .flip-card-container {
+    min-height: 44px;
+  }
 }
