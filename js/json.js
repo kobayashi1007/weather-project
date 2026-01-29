@@ -64,7 +64,9 @@ function renderWeather(data, container) {
     times.forEach((t, index) => {
       const weatherDesc = location.weatherElement[0].time[index].parameter.parameterName;
       console.log(`第${index+1}時段天氣：${weatherDesc}`);
+      const pop = location.weatherElement[1].time[index].parameter.parameterName;
       const minTemp = location.weatherElement[2].time[index].parameter.parameterName;
+      const ci = location.weatherElement[3].time[index].parameter.parameterName;
       const maxTemp = location.weatherElement[4].time[index].parameter.parameterName;
       const startTime = new Date(t.startTime).toLocaleString("zh-TW", { 
         month: "short", 
@@ -78,23 +80,6 @@ function renderWeather(data, container) {
         hour: "2-digit", 
         minute: "2-digit" 
       });
-      const fullStartTime = new Date(t.startTime).toLocaleString("zh-TW", { 
-        year: "numeric",
-        month: "long", 
-        day: "numeric", 
-        hour: "2-digit", 
-        minute: "2-digit",
-        weekday: "short"
-      });
-      const fullEndTime = new Date(t.endTime).toLocaleString("zh-TW", { 
-        year: "numeric",
-        month: "long", 
-        day: "numeric", 
-        hour: "2-digit", 
-        minute: "2-digit",
-        weekday: "short"
-      });
-
       container.innerHTML += `
         <div class="col-md-3 col-sm-6 mb-3">
           <div class="flip-card-container" onclick="flipCard(this)">
@@ -111,11 +96,11 @@ function renderWeather(data, container) {
                   <div>
                     <h6 style="font-size: 1.5rem; margin-bottom: 0.4rem; font-weight: bold;">詳細資訊</h6>
                     <div style="font-size: 1.8rem; margin-bottom: 0.4rem;">${getIcon(weatherDesc)}</div>
-                    <div style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 0.3rem;">
-                      <div><strong>開始：</strong>${fullStartTime}</div>
+                    <div style="font-size: 1rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                      <div><strong>體感溫度：</strong>${ci}</div>
                     </div>
-                    <div style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 0.3rem;">
-                      <div><strong>結束：</strong>${fullEndTime}</div>
+                    <div style="font-size: 1rem; line-height: 1.4; margin-bottom: 0.3rem;">
+                      <div><strong>降雨機率：</strong>${pop}%</div>
                     </div>
                     <div style="font-size: 1rem; line-height: 1.4; margin-bottom: 0.3rem;">
                       <div><strong>溫度：</strong>${minTemp}°C ~ ${maxTemp}°C</div>
