@@ -22,8 +22,6 @@ async function getWeather() {
   const city = cityMap[cityInput] || cityInput;
   const url = `${endpoint}?Authorization=${apiKey}&locationName=${city}`;
 
-  document.getElementById("locationName").textContent = city;
-  markCityOnMap(city);
   const container = document.getElementById("forecastCards");
   container.innerHTML = "";
   try {
@@ -31,6 +29,8 @@ async function getWeather() {
     // 檢查快取是否存在且未過期
     if (cache[city] && (now - cache[city].timestamp < CACHE_TTL)) {
       console.log("使用快取資料");
+      document.getElementById("locationName").textContent = city;
+      markCityOnMap(city);
       renderWeather(cache[city].data, container);
       return;
     }
@@ -40,14 +40,31 @@ async function getWeather() {
     container.innerHTML = "";
 
     if (!data.records || !data.records.location || data.records.location.length === 0) {
+      // 顯示錯誤彈窗
+      const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+      errorModal.show();
+      // 清空輸入欄
+      document.getElementById("cityInput").value = "";
+      // 恢復標題為「城市名稱」
+      document.getElementById("locationName").textContent = "城市名稱";
       container.innerHTML = `<p class="text-danger">查無資料，請確認城市名稱</p>`;
       return;
     }
+    // 更新標題為正確的城市名稱
+    document.getElementById("locationName").textContent = city;
+    markCityOnMap(city);
     // 更新快取
     cache[city] = { data, timestamp: now };
     // 首次查詢也要直接渲染
     renderWeather(data, container);
   } catch (err) {
+    // 顯示錯誤彈窗
+    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    errorModal.show();
+    // 清空輸入欄
+    document.getElementById("cityInput").value = "";
+    // 恢復標題為「城市名稱」
+    document.getElementById("locationName").textContent = "城市名稱";
     document.getElementById("forecastCards").innerHTML =
       `<p class="text-danger">查詢失敗，請稍後再試</p>`;
     console.error(err);
