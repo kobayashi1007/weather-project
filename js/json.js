@@ -9,28 +9,65 @@ const CACHE_TTL = 60 * 60 * 1000;
 
 async function getWeather() {
   const cityInput = document.getElementById("cityInput").value.trim();
+  
+  // 如果輸入為空，顯示提示
+  if (!cityInput) {
+    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    errorModal.show();
+    document.getElementById("locationName").textContent = "城市名稱";
+    return;
+  }
+  
+  // 完整的城市名稱映射（支援簡體、簡稱等）
   const cityMap = {
-    "台北市": "臺北市",
-    "台中市": "臺中市",
-    "台南市": "臺南市",
-    "新北市": "新北市",
-    "高雄市": "高雄市",
-    "台北" :"臺北市",
-    "台東縣":"臺東縣",
-    "台東":"臺東縣",  
+    // 直轄市
+    "台北市": "臺北市", "台北": "臺北市", "taipei": "臺北市", "Taipei": "臺北市",
+    "新北市": "新北市", "新北": "新北市", "newtaipei": "新北市", "NewTaipei": "新北市",
+    "台中市": "臺中市", "台中": "臺中市", "taichung": "臺中市", "Taichung": "臺中市",
+    "台南市": "臺南市", "台南": "臺南市", "tainan": "臺南市", "Tainan": "臺南市",
+    "高雄市": "高雄市", "高雄": "高雄市", "kaohsiung": "高雄市", "Kaohsiung": "高雄市",
+    "桃園市": "桃園市", "桃園": "桃園市", "taoyuan": "桃園市", "Taoyuan": "桃園市",
+    // 縣市
+    "新竹市": "新竹市", "新竹": "新竹市", "hsinchu": "新竹市", "Hsinchu": "新竹市",
+    "新竹縣": "新竹縣",
+    "苗栗縣": "苗栗縣", "苗栗": "苗栗縣", "苗栗市": "苗栗縣",
+    "彰化縣": "彰化縣", "彰化": "彰化縣", "彰化市": "彰化縣",
+    "南投縣": "南投縣", "南投": "南投縣",
+    "雲林縣": "雲林縣", "雲林": "雲林縣", "雲林市": "雲林縣",
+    "嘉義市": "嘉義市", "嘉義": "嘉義市",
+    "嘉義縣": "嘉義縣",
+    "屏東縣": "屏東縣", "屏東": "屏東縣",
+    "台東縣": "臺東縣", "台東": "臺東縣", "taitung": "臺東縣", "Taitung": "臺東縣",
+    "花蓮縣": "花蓮縣", "花蓮": "花蓮縣", "hualien": "花蓮縣", "Hualien": "花蓮縣",
+    "宜蘭縣": "宜蘭縣", "宜蘭": "宜蘭縣", "yilan": "宜蘭縣", "Yilan": "宜蘭縣",
+    "基隆市": "基隆市", "基隆": "基隆市", "keelung": "基隆市", "Keelung": "基隆市",
+    "澎湖縣": "澎湖縣", "澎湖": "澎湖縣", "penghu": "澎湖縣", "Penghu": "澎湖縣",
+    "金門縣": "金門縣", "金門": "金門縣", "kinmen": "金門縣", "Kinmen": "金門縣",
+    "連江縣": "連江縣", "連江": "連江縣", "lienchiang": "連江縣", "Lienchiang": "連江縣",
   };
   const city = cityMap[cityInput] || cityInput;
   const url = `${endpoint}?Authorization=${apiKey}&locationName=${city}`;
 
   const container = document.getElementById("forecastCards");
+  const loadingSpinner = document.getElementById("loadingSpinner");
+  const weatherResult = document.getElementById("weatherResult");
+  
+  // 顯示載入動畫
   container.innerHTML = "";
+  loadingSpinner.style.display = "block";
+  weatherResult.style.display = "none";
+  
   try {
     const now = Date.now();
     // 檢查快取是否存在且未過期
     if (cache[city] && (now - cache[city].timestamp < CACHE_TTL)) {
       console.log("使用快取資料");
+      loadingSpinner.style.display = "none";
+      weatherResult.style.display = "block";
       document.getElementById("locationName").textContent = city;
       markCityOnMap(city);
+      // 清除錯誤訊息
+      document.getElementById("errorMessageArea").innerHTML = "";
       renderWeather(cache[city].data, container);
       return;
     }
@@ -40,6 +77,9 @@ async function getWeather() {
     container.innerHTML = "";
 
     if (!data.records || !data.records.location || data.records.location.length === 0) {
+      // 隱藏載入動畫
+      loadingSpinner.style.display = "none";
+      weatherResult.style.display = "block";
       // 顯示錯誤彈窗
       const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
       errorModal.show();
@@ -47,7 +87,10 @@ async function getWeather() {
       document.getElementById("cityInput").value = "";
       // 恢復標題為「城市名稱」
       document.getElementById("locationName").textContent = "城市名稱";
-      container.innerHTML = `<p class="text-danger">查無資料，請確認城市名稱</p>`;
+      // 顯示錯誤訊息在搜尋欄下方
+      const errorArea = document.getElementById("errorMessageArea");
+      errorArea.innerHTML = `<div class="error-message-container"><p class="error-message">⚠️ 查無資料，請確認城市名稱</p></div>`;
+      container.innerHTML = "";
       return;
     }
     // 更新標題為正確的城市名稱
@@ -55,9 +98,17 @@ async function getWeather() {
     markCityOnMap(city);
     // 更新快取
     cache[city] = { data, timestamp: now };
+    // 隱藏載入動畫，顯示結果
+    loadingSpinner.style.display = "none";
+    weatherResult.style.display = "block";
+    // 清除錯誤訊息
+    document.getElementById("errorMessageArea").innerHTML = "";
     // 首次查詢也要直接渲染
     renderWeather(data, container);
   } catch (err) {
+    // 隱藏載入動畫
+    loadingSpinner.style.display = "none";
+    weatherResult.style.display = "block";
     // 顯示錯誤彈窗
     const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
     errorModal.show();
@@ -65,8 +116,10 @@ async function getWeather() {
     document.getElementById("cityInput").value = "";
     // 恢復標題為「城市名稱」
     document.getElementById("locationName").textContent = "城市名稱";
-    document.getElementById("forecastCards").innerHTML =
-      `<p class="text-danger">查詢失敗，請稍後再試</p>`;
+    // 顯示錯誤訊息在搜尋欄下方
+    const errorArea = document.getElementById("errorMessageArea");
+    errorArea.innerHTML = `<div class="error-message-container"><p class="error-message">⚠️ 查詢失敗，請稍後再試</p></div>`;
+    document.getElementById("forecastCards").innerHTML = "";
     console.error(err);
   }
 }
@@ -77,6 +130,12 @@ function renderWeather(data, container) {
     const times = location.weatherElement[0].time; 
     // 每次渲染前先清空
     container.innerHTML = "";
+    
+    // 使用 documentFragment 優化 DOM 操作
+    const fragment = document.createDocumentFragment();
+    const row = document.createElement('div');
+    row.className = 'row';
+    
     // 顯示所有時段，不再限制只顯示3個
     times.forEach((t, index) => {
       const weatherDesc = location.weatherElement[0].time[index].parameter.parameterName;
@@ -97,43 +156,51 @@ function renderWeather(data, container) {
         hour: "2-digit", 
         minute: "2-digit" 
       });
-      container.innerHTML += `
-        <div class="col-md-3 col-sm-6 mb-3">
-          <div class="flip-card-container" onclick="flipCard(this)">
-            <div class="flip-card-inner">
-              <div class="flip-card-front card p-2 text-center shadow-sm">
-                <h6 style="font-size: 1.5rem; margin-bottom: 0.5rem;">${startTime}</h6>
-                <div style="font-size: 1.8rem;">${getIcon(weatherDesc)}</div>
-                <p style="font-size: 1rem; margin: 0.5rem 0;">${minTemp}°C ~ ${maxTemp}°C</p>
-                <small style="font-size: 1rem;">${weatherDesc}</small>
-                <div style="margin-top: 4rem; font-size: 0.8rem; opacity: 0.7;">點擊查看詳情</div>
-              </div>
-              <div class="flip-card-back card p-2 text-center shadow-sm">
-                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 0.5rem;">
-                  <div>
-                    <h6 style="font-size: 1.5rem; margin-bottom: 0.4rem; font-weight: bold;">詳細資訊</h6>
-                    <div style="font-size: 1.8rem; margin-bottom: 0.4rem;">${getIcon(weatherDesc)}</div>
-                    <div style="font-size: 1rem; line-height: 1.4; margin-bottom: 0.3rem;">
-                      <div><strong>體感溫度：</strong>${ci}</div>
-                    </div>
-                    <div style="font-size: 1rem; line-height: 1.4; margin-bottom: 0.3rem;">
-                      <div><strong>降雨機率：</strong>${pop}%</div>
-                    </div>
-                    <div style="font-size: 1rem; line-height: 1.4; margin-bottom: 0.3rem;">
-                      <div><strong>溫度：</strong>${minTemp}°C ~ ${maxTemp}°C</div>
-                    </div>
-                    <div style="font-size: 1rem; line-height: 1.4;">
-                      <div><strong>天氣：</strong>${weatherDesc}</div>
-                    </div>
+      // 創建卡片元素
+      const col = document.createElement('div');
+      col.className = 'col-md-3 col-sm-6 mb-3';
+      
+      const cardHTML = `
+        <div class="flip-card-container" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front card p-2 text-center shadow-sm">
+              <h6 class="card-time">${startTime}</h6>
+              <div class="card-icon">${getIcon(weatherDesc)}</div>
+              <p class="card-temp">${minTemp}°C ~ ${maxTemp}°C</p>
+              <small class="card-desc">${weatherDesc}</small>
+              <div class="card-hint">點擊查看詳情</div>
+            </div>
+            <div class="flip-card-back card p-2 text-center shadow-sm">
+              <div class="card-back-content">
+                <div>
+                  <h6 class="card-back-title">詳細資訊</h6>
+                  <div class="card-back-icon">${getIcon(weatherDesc)}</div>
+                  <div class="card-back-info">
+                    <div><strong>體感溫度：</strong>${ci}°C</div>
                   </div>
-                  <div style="margin-top: auto; font-size: 0.8rem; opacity: 0.7; padding-top: 0.3rem;">點擊返回</div>
+                  <div class="card-back-info">
+                    <div><strong>降雨機率：</strong>${pop}%</div>
+                  </div>
+                  <div class="card-back-info">
+                    <div><strong>溫度：</strong>${minTemp}°C ~ ${maxTemp}°C</div>
+                  </div>
+                  <div class="card-back-info">
+                    <div><strong>天氣：</strong>${weatherDesc}</div>
+                  </div>
                 </div>
+                <div class="card-back-hint">點擊返回</div>
               </div>
             </div>
           </div>
         </div>
       `;
+      
+      col.innerHTML = cardHTML;
+      row.appendChild(col);
     });
+    
+    fragment.appendChild(row);
+    container.appendChild(fragment);
   }
 
 // 根據天氣描述選擇 emoji 圖示
@@ -161,6 +228,12 @@ function selectCity(cityName) {
   getWeather();
 }
 
+// 從地圖選擇城市
+function selectCityFromMap(cityName) {
+  document.getElementById("cityInput").value = cityName;
+  getWeather();
+}
+
 // 在地圖上標記城市
 function markCityOnMap(cityName) {
   // 清除所有標記
@@ -177,7 +250,7 @@ function markCityOnMap(cityName) {
     label.setAttribute('opacity', '0');
   });
   
-  // 標記選中的城市
+  // 標記選中的城市（可能有多個標記，例如苗栗縣和苗栗市）
   const marker = document.getElementById(`marker-${cityName}`);
   const label = document.getElementById(`label-${cityName}`);
   
@@ -189,6 +262,39 @@ function markCityOnMap(cityName) {
   if (label) {
     label.classList.add('active');
     label.setAttribute('opacity', '1');
+  }
+  
+  // 處理縣市別的情況（例如：苗栗縣和苗栗市在同一個位置）
+  // 如果查詢的是縣，也標記對應的市標記（如果存在）
+  if (cityName.endsWith('縣')) {
+    const cityNameWithoutCounty = cityName.replace('縣', '市');
+    const cityMarker = document.getElementById(`marker-${cityNameWithoutCounty}`);
+    const cityLabel = document.getElementById(`label-${cityNameWithoutCounty}`);
+    
+    if (cityMarker && !cityMarker.classList.contains('active')) {
+      cityMarker.classList.add('active');
+      cityMarker.setAttribute('opacity', '1');
+    }
+    if (cityLabel && !cityLabel.classList.contains('active')) {
+      cityLabel.classList.add('active');
+      cityLabel.setAttribute('opacity', '1');
+    }
+  }
+  
+  // 如果查詢的是市，也標記對應的縣標記（如果存在）
+  if (cityName.endsWith('市') && !cityName.includes('臺') && !cityName.includes('台')) {
+    const countyName = cityName.replace('市', '縣');
+    const countyMarker = document.getElementById(`marker-${countyName}`);
+    const countyLabel = document.getElementById(`label-${countyName}`);
+    
+    if (countyMarker && !countyMarker.classList.contains('active')) {
+      countyMarker.classList.add('active');
+      countyMarker.setAttribute('opacity', '1');
+    }
+    if (countyLabel && !countyLabel.classList.contains('active')) {
+      countyLabel.classList.add('active');
+      countyLabel.setAttribute('opacity', '1');
+    }
   }
 }
 
