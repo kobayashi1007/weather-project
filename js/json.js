@@ -131,52 +131,34 @@ function renderWeather(data, container) {
     // 每次渲染前先清空
     container.innerHTML = "";
     
-    // 取得今天 00:00 的日期（台灣時區）
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // 依日期分組，找出當天、明天、後天、大後天各一天的代表時段（取該日第一個時段）
-    const dayLabels = ['當天', '明天', '後天', '大後天'];
-    const dayIndices = [];
-    
-    for (let dayOffset = 0; dayOffset < 4; dayOffset++) {
-      const targetDate = new Date(today);
-      targetDate.setDate(today.getDate() + dayOffset);
-      const targetDateStr = targetDate.toDateString();
-      
-      const index = times.findIndex(t => {
-        const startDate = new Date(t.startTime);
-        startDate.setHours(0, 0, 0, 0);
-        return startDate.toDateString() === targetDateStr;
-      });
-      
-      if (index !== -1) {
-        dayIndices.push({ label: dayLabels[dayOffset], index });
-      }
-    }
-    
     // 使用 documentFragment 優化 DOM 操作
     const fragment = document.createDocumentFragment();
     const row = document.createElement('div');
     row.className = 'row';
     
-    dayIndices.forEach(({ label, index }) => {
-      const t = times[index];
+    // 顯示所有時段
+    times.forEach((t, index) => {
       const weatherDesc = location.weatherElement[0].time[index].parameter.parameterName;
       const pop = location.weatherElement[1].time[index].parameter.parameterName;
       const minTemp = location.weatherElement[2].time[index].parameter.parameterName;
       const ci = location.weatherElement[3].time[index].parameter.parameterName;
       const maxTemp = location.weatherElement[4].time[index].parameter.parameterName;
+      const startTime = new Date(t.startTime).toLocaleString("zh-TW", { 
+        month: "short", 
+        day: "numeric", 
+        hour: "2-digit", 
+        minute: "2-digit" 
+      });
       
-      // 創建卡片元素（四欄位：col-md-3 剛好一排四個）
+      // 創建卡片元素
       const col = document.createElement('div');
-      col.className = 'col-md-3 col-6 mb-3';
+      col.className = 'col-md-3 col-sm-6 mb-3';
       
       const cardHTML = `
         <div class="flip-card-container" onclick="flipCard(this)">
           <div class="flip-card-inner">
             <div class="flip-card-front card p-2 text-center shadow-sm">
-              <h6 class="card-time">${label}</h6>
+              <h6 class="card-time">${startTime}</h6>
               <div class="card-icon">${getIcon(weatherDesc)}</div>
               <p class="card-temp">${minTemp}°C ~ ${maxTemp}°C</p>
               <small class="card-desc">${weatherDesc}</small>
@@ -185,7 +167,7 @@ function renderWeather(data, container) {
             <div class="flip-card-back card p-2 text-center shadow-sm">
               <div class="card-back-content">
                 <div>
-                  <h6 class="card-back-title">${label}</h6>
+                  <h6 class="card-back-title">詳細資訊</h6>
                   <div class="card-back-icon">${getIcon(weatherDesc)}</div>
                   <div class="card-back-info">
                     <div><strong>體感溫度：</strong>${ci}°C</div>
@@ -339,3 +321,4 @@ function handleEnterKey(event) {
     getWeather();
   }
 }
+
