@@ -2,165 +2,29 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <title>Cityunisure 天氣預報</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>天氣預報首頁</title>
   <link rel="icon" href="images/WEATHER.png" type="image/png">
-  
-</head> 
-<body class="text-white">
-  <!-- 台灣地圖 -->
-  <div class="taiwan-map-wrapper">
-    <button class="map-toggle-btn" onclick="toggleMap()" id="mapToggleBtn" title="展開/縮起地圖">
-      <span id="mapToggleIcon">🗺️</span>
-    </button>
-    <div class="taiwan-map-container" id="taiwanMapContainer">
-      <div class="taiwan-map-image">
-        <img src="images/taiwan-map.png" alt="台灣地圖" id="taiwanMapImage" style="width: 100%; height: 100%; object-fit: contain;">
-      </div>
-      <svg class="taiwan-map-overlay" viewBox="0 0 180 240" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-        <!-- 城市標記點（根據實際地理位置調整，對應地圖圖片） -->
-        <circle id="marker-臺北市" class="city-marker" cx="145" cy="20" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-新北市" class="city-marker" cx="140" cy="30" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-臺中市" class="city-marker" cx="88" cy="75" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-高雄市" class="city-marker" cx="87" cy="155" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-桃園市" class="city-marker" cx="120" cy="20" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-新竹市" class="city-marker" cx="120" cy="40" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-苗栗市" class="city-marker" cx="105" cy="60" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-彰化市" class="city-marker" cx="75" cy="90" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-雲林市" class="city-marker" cx="68" cy="108" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-嘉義市" class="city-marker" cx="64" cy="123" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-嘉義縣" class="city-marker" cx="73" cy="123" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-臺南縣" class="city-marker" cx="64" cy="141" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-屏東縣" class="city-marker" cx="83" cy="187" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-臺東縣" class="city-marker" cx="114" cy="168" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-花蓮縣" class="city-marker" cx="140" cy="102" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-宜蘭縣" class="city-marker" cx="154" cy="51" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-南投縣" class="city-marker" cx="109" cy="97" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-基隆市" class="city-marker" cx="144" cy="1" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-連江縣" class="city-marker" cx="10" cy="22" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-金門縣" class="city-marker" cx="19" cy="60" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-澎湖縣" class="city-marker" cx="19" cy="115" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-        <circle id="marker-新竹縣" class="city-marker" cx="116" cy="38" r="8" fill="#ff6b6b" opacity="0" stroke="white" stroke-width="2"/>
-
-        
-
-        <!-- 城市標籤 -->
-        <text id="label-臺北市" class="city-label" x="145" y="23" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">臺北</text>
-        <text id="label-新北市" class="city-label" x="140" y="33" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">新北</text>
-        <text id="label-臺中市" class="city-label" x="88" y="78" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">臺中</text>
-        <text id="label-高雄市" class="city-label" x="87" y="158" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">高雄</text>
-        <text id="label-桃園市" class="city-label" x="120" y="23" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">桃園市</text>
-        <text id="label-新竹市" class="city-label" x="120" y="42" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">新竹市</text>
-        <text id="label-苗栗縣" class="city-label" x="145" y="23" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">苗栗縣</text>
-        <text id="label-雲林市" class="city-label" x="68" y="110" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">雲林市</text>
-        <text id="label-嘉義市" class="city-label" x="65" y="124" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">嘉義市</text>
-        <text id="label-嘉義縣" class="city-label" x="145" y="23" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">嘉義縣</text>
-        <text id="label-臺南市" class="city-label" x="64" y="143" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">台南</text>
-        <text id="label-彰化市" class="city-label" x="75" y="92" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">彰化</text>
-        <text id="label-臺東縣" class="city-label" x="114" y="170" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">彰化</text>
-        <text id="label-屏東縣" class="city-label" x="83" y="189" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">屏東</text>
-        <text id="label-花蓮縣" class="city-label" x="140" y="104" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">彰化</text>
-        <text id="label-宜蘭縣" class="city-label" x="154" y="53" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">宜蘭</text>
-        <text id="label-南投縣" class="city-label" x="109" y="99" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">南投</text>
-        <text id="label-基隆市" class="city-label" x="144" y="3" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">基隆</text>
-        <text id="label-連江縣" class="city-label" x="10" y="24" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">連江</text>
-        <text id="label-新竹縣" class="city-label" x="116" y="40" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">新竹縣</text>
-        <text id="label-金門縣" class="city-label" x="19" y="61" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">金門</text>
-        <text id="label-澎湖縣" class="city-label" x="19" y="117" font-size="9" fill="white" text-anchor="middle" opacity="0" font-weight="bold">澎湖</text>
-      </svg>
-    </div>
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+  <div class="title-section">
+    <h1>天氣預報</h1>
   </div>
 
-  <div class="container py-5">
-    <div class="header-section mb-5">
-      <h1 class="text-center mb-4 location-title" id="locationName" style="font-weight: bold;">城市名稱</h1>
-
-      <!-- 搜尋欄 -->
-      <div class="d-flex justify-content-center mb-3">
-        <div class="input-group search-container">
-          <input type="text" id="cityInput" class="form-control" placeholder="請輸入縣市，例如：臺北市" onkeypress="handleEnterKey(event)">
-          <button class="btn btn-primary search-btn" onclick="getWeather()">顯示結果</button>
-        </div>
+  <div class="main-container">
+    <div class="images-container">
+      <div class="image-box">
+        <img src="images/3.png" alt="天氣預報1">
       </div>
-      <!-- 錯誤訊息顯示區域 -->
-      <div id="errorMessageArea" class="error-message-area"></div>
-    </div>
-
-    <!-- 城市便捷選擇框 - 六都 -->
-    <div class="row mb-5">
-      <div class="col-md-4 col-sm-6 mb-3">
-        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('臺北市')">
-          <h5 class="mb-2">🏙️</h5>
-          <h6>臺北市</h6>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-6 mb-3">
-        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('新北市')">
-          <h5 class="mb-2">🏘️</h5>
-          <h6>新北市</h6>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-6 mb-3">
-        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('桃園市')">
-          <h5 class="mb-2">🏭</h5>
-          <h6>桃園市</h6>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-6 mb-3">
-        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('臺中市')">
-          <h5 class="mb-2">🏢</h5>
-          <h6>臺中市</h6>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-6 mb-3">
-        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('臺南市')">
-          <h5 class="mb-2">🏛️</h5>
-          <h6>臺南市</h6>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-6 mb-3">
-        <div class="city-card card p-3 text-center shadow-sm" onclick="selectCity('高雄市')">
-          <h5 class="mb-2">🌆</h5>
-          <h6>高雄市</h6>
-        </div>
-      </div>
-    </div>
-
-    <!-- 載入動畫 -->
-    <div id="loadingSpinner" class="text-center" style="display: none;">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">載入中...</span>
-      </div>
-      <p class="mt-2">正在查詢天氣資料...</p>
-    </div>
-
-    <!-- 天氣結果區塊 -->
-    <div id="weatherResult">
-      <div class="row" id="forecastCards"></div>
-    </div>
-  </div>
-
-  <!-- 錯誤提示彈窗 -->
-  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content bg-dark text-white border border-danger">
-        <div class="modal-header border-danger">
-          <h5 class="modal-title" id="errorModalLabel">⚠️ 輸入錯誤</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>請輸入正確的城市名稱</p>
-        </div>
-        <div class="modal-footer border-danger">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確定</button>
-        </div>
+      <div class="image-box">
+        <img src="images/4.png" alt="天氣預報2">
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/json.js"></script>
+  <div class="search-section">
+    <a href="search.html" class="search-button">開始搜尋</a>
+  </div>
 </body>
 </html>

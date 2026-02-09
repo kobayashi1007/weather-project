@@ -244,7 +244,7 @@ function markCityOnMap(cityName) {
     label.setAttribute('opacity', '0');
   });
   
-  // 標記選中的城市（可能有多個標記，例如苗栗縣和苗栗市）
+  // 只標記選中的城市（單一標記）
   const marker = document.getElementById(`marker-${cityName}`);
   const label = document.getElementById(`label-${cityName}`);
   
@@ -256,39 +256,6 @@ function markCityOnMap(cityName) {
   if (label) {
     label.classList.add('active');
     label.setAttribute('opacity', '1');
-  }
-  
-  // 處理縣市別的情況（例如：苗栗縣和苗栗市在同一個位置）
-  // 如果查詢的是縣，也標記對應的市標記（如果存在）
-  if (cityName.endsWith('縣')) {
-    const cityNameWithoutCounty = cityName.replace('縣', '市');
-    const cityMarker = document.getElementById(`marker-${cityNameWithoutCounty}`);
-    const cityLabel = document.getElementById(`label-${cityNameWithoutCounty}`);
-    
-    if (cityMarker && !cityMarker.classList.contains('active')) {
-      cityMarker.classList.add('active');
-      cityMarker.setAttribute('opacity', '1');
-    }
-    if (cityLabel && !cityLabel.classList.contains('active')) {
-      cityLabel.classList.add('active');
-      cityLabel.setAttribute('opacity', '1');
-    }
-  }
-  
-  // 如果查詢的是市，也標記對應的縣標記（如果存在）
-  if (cityName.endsWith('市') && !cityName.includes('臺') && !cityName.includes('台')) {
-    const countyName = cityName.replace('市', '縣');
-    const countyMarker = document.getElementById(`marker-${countyName}`);
-    const countyLabel = document.getElementById(`label-${countyName}`);
-    
-    if (countyMarker && !countyMarker.classList.contains('active')) {
-      countyMarker.classList.add('active');
-      countyMarker.setAttribute('opacity', '1');
-    }
-    if (countyLabel && !countyLabel.classList.contains('active')) {
-      countyLabel.classList.add('active');
-      countyLabel.setAttribute('opacity', '1');
-    }
   }
 }
 
